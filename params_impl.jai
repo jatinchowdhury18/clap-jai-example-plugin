@@ -36,7 +36,7 @@ param_holder_get_param_value :: (using params: *ParamHolder,
                                  out_value: *float64) -> bool {
     param_entry := param_list[param_id];
 
-    out_value[0] = (cast(*FloatParameter) param_entry.data).current_value;
+    (<<out_value) = (cast(*FloatParameter) param_entry.data).current_value;
     return true;
 }
 
@@ -62,7 +62,7 @@ param_holder_param_text_to_value :: (using params: *ParamHolder,
     value_str.data = param_value_text;
     value_str.count = c_style_strlen(param_value_text);
 
-    out_value[0] = string_to_float64(value_str);
+    (<<out_value) = string_to_float64(value_str);
 
     return true;
 }
