@@ -24,7 +24,6 @@ clap_get_plugin_descriptor :: (factory: *clap_plugin_factory_t, idx: u32) -> *cl
     new_context: Context;
     push_context new_context {
         for feature, it : clap_features {
-            print("Adding CLAP feature: %\n", feature);
             clap_features_char_ptrs[it] = feature.data;
         }
     }
@@ -34,7 +33,7 @@ clap_get_plugin_descriptor :: (factory: *clap_plugin_factory_t, idx: u32) -> *cl
 clap_create_plugin :: (factory: *clap_plugin_factory_t, host: *clap_host_t, plugin_id: *char) -> *clap_plugin_t #c_call {
     new_context: Context;
     push_context new_context {
-        str_plugin_id := StringHelpers.to_string(plugin_id);
+        str_plugin_id := to_string(plugin_id);
         if (str_plugin_id != my_plugin_id) {
             print("Wrong plugin_id! Got: %, expected: %. Returning null!\n", str_plugin_id, my_plugin_id);
             return null;
@@ -44,45 +43,18 @@ clap_create_plugin :: (factory: *clap_plugin_factory_t, host: *clap_host_t, plug
     }
 }
 
-// template<typename PluginType>
-// static const clap_plugin *clap_create_plugin(const clap_plugin_factory *,
-//                                              const clap_host *host,
-//                                              const char *plugin_id) {
-//     if (strcmp(plugin_id, PluginType::description.id))
-//         return nullptr;
-
-//     // From baconpaul: I know it looks like a leak right? but the
-//     // clap-plugin-helpers basically take ownership and destroy the wrapper when
-//     // the host destroys the underlying plugin (look at Plugin<h, l>::clapDestroy
-//     // if you don't believe me!)
-//     auto p = new PluginType(host);
-//     return p->clapPlugin();
-// }
-
 plugin_factory := clap_plugin_factory_t.{clap_get_plugin_count,
                                          clap_get_plugin_descriptor,
                                          clap_create_plugin};
 
 clap_init :: (plugin_path: *char) -> bool #c_call {
-    new_context: Context;
-    push_context new_context {
-        print("INIT!\n");
-    }
     return true;
 }
 
 clap_deinit :: () #c_call {
-    new_context: Context;
-    push_context new_context {
-        print("DEINIT!\n");
-    }
 }
 
 clap_get_factory :: (factory_id: *char) -> *void #c_call {
-    new_context: Context;
-    push_context new_context {
-        print("get_factory!!\n");
-    }
     return *plugin_factory;
 }
 

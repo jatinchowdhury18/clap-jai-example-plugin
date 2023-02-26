@@ -1,13 +1,18 @@
 #import "Basic";
 #import "Compiler";
+#import "File_Utilities";
+
+plugin_file_name :: "jai_clap_plugin";
 
 #run build();
+// #run copy_file(tprint("%/%.jai", #filepath, plugin_file_name),
+//                tprint("/c/Program Files/Common Files/CLAP/%.clap", plugin_file_name));
 
 build :: () {
     w := compiler_create_workspace();
 
     target_options := get_build_options(w);
-    target_options.output_executable_name = "clap_plugin";
+    target_options.output_executable_name = plugin_file_name;
     target_options.output_type = .DYNAMIC_LIBRARY; // specifies output to be a dynamic library
 
     extra_import_paths: [2] string;
@@ -26,8 +31,4 @@ build :: () {
 
 
     set_build_options_dc(.{do_output=false});  // No executable for this workspace.
-
 }
-
-// main :: () {
-// }
