@@ -31,6 +31,15 @@ clap_host_proxy :: struct {
 }
 
 clap_logger :: (message: string, data: *void, info: Log_Info) {
+    log_severity : clap_log_severity = .CLAP_LOG_INFO;
+    if (info.common_flags == .ERROR) {
+        log_severity = .CLAP_LOG_ERROR;
+    } else if (info.common_flags == .WARNING) {
+        log_severity = .CLAP_LOG_WARNING;
+    } else if (info.common_flags == .VERBOSE_ONLY || info.common_flags == .VERY_VERBOSE_ONLY) {
+        log_severity = .CLAP_LOG_DEBUG;
+    }
+
     trimmed_message: string;
     trimmed_message.data = message.data;
     if (message[message.count - 1] == #char "\n") {
@@ -40,9 +49,10 @@ clap_logger :: (message: string, data: *void, info: Log_Info) {
     }
 
     host_proxy := cast(*clap_host_proxy) data;
-    log_string := to_c_string(trimmed_message);
-    host_proxy.host_log.log(cast(*clap_host_t) host_proxy.host, .CLAP_LOG_INFO, log_string); // TODO use Log_Info to get clap_log_severity
-    free(log_string);
+    log_string := tprint("%\0", trimmed_message);
+    host_proxy.host_log.log(cast(*clap_host_t) host_proxy.host, log_severity, log_string.data);
+    
+    // @TODO: figure out how we can call reset_temporary_storage() to reclaim the memory from log_string...
 }
 
 host_proxy_init :: (using host_proxy: *clap_host_proxy, verbose: bool = false) {
