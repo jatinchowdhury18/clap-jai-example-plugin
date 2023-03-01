@@ -1,4 +1,5 @@
 .build/
+old/
 *.dll
 *.lib
 *.exp
