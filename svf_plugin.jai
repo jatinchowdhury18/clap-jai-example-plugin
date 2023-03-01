@@ -39,6 +39,7 @@ SVF_Plugin :: struct {
     // clap extensions
     custom_audio_ports: Custom_Audio_Ports;
     params: SVF_Plugin_Params;
+    state_save_load: Plugin_State;
 }
 
 plugin_name :: "Jai CLAP SVF\0";
@@ -63,6 +64,7 @@ create_plugin :: (factory: *clap_plugin_factory_t, host: *clap_host_t) -> *clap_
     activate = plugin_activate;
     custom_audio_ports_init(*custom_audio_ports, *clap_audio_ports_ext);
     clap_params_ext = *params;
+    clap_state_ext = *state_save_load;
 
     return *self.clap_plugin;
 }
