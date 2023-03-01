@@ -6,28 +6,10 @@
 #import "clap-jai";
 #load "custom_audio_ports.jai";
 #load "svf_params.jai";
+#load "svf_processor.jai";
 
 clap_plugin_id :: "com.chowdsp.svf-plugin";
 clap_features :: *u8.[CLAP_PLUGIN_FEATURE_AUDIO_EFFECT.data, CLAP_PLUGIN_FEATURE_FILTER.data, null];
-
-SVF_Processor :: struct {
-    #as using base: Audio_Processor;
-    params: *SVF_Plugin_Params;
-}
-
-process_svf :: (proc: *Audio_Processor, buffers: *Process_Buffers) {
-    using self := cast(*SVF_Processor) proc;
-
-    // gain := cast(float32) params.z1_param.current_value;
-    // for ch: 0..buffers.num_in_channels-1 {
-    //     channel_data_in := buffers.data_in[ch];
-    //     channel_data_out := buffers.data_out[ch];
-
-    //     for n: 0..buffers.num_samples-1 {
-    //         channel_data_out[n] = gain * channel_data_in[n];
-    //     }
-    // }
-}
 
 SVF_Plugin :: struct {
     #as using base: Plugin_Base;
@@ -72,8 +54,7 @@ create_plugin :: (factory: *clap_plugin_factory_t, host: *clap_host_t) -> *clap_
 plugin_init :: (using plugin: *SVF_Plugin) {
     log("Initializing plugin!\n");
 
-    init_param(*params.cutoff_param, "Cutoff", 20.0, 20000.0, 1000.0, 1000.0);
-    register_param(*params, *params.cutoff_param);
+    init_params(*params);
 
     init_audio_thread_context(*audio_thread_ctx);
     audio_processor.params = *params;
@@ -83,4 +64,5 @@ plugin_init :: (using plugin: *SVF_Plugin) {
 
 plugin_activate :: (using plugin: *SVF_Plugin, sample_rate: float64, max_block_size: u32) {
     log("Activating plugin!\n");
+    prepare_processor(*audio_processor, sample_rate, max_block_size, 2);
 }
