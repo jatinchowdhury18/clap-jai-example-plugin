@@ -8,6 +8,12 @@
 #load "svf_params.jai";
 #load "svf_processor.jai";
 
+// TODO:
+// state saving/loading
+// dynamic channel count
+// reset()
+// GUI??
+
 clap_plugin_id :: "com.chowdsp.svf-plugin";
 clap_features :: *u8.[CLAP_PLUGIN_FEATURE_AUDIO_EFFECT.data, CLAP_PLUGIN_FEATURE_FILTER.data, null];
 

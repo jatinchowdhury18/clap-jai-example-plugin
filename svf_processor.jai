@@ -15,8 +15,8 @@ process_svf :: (proc: *Audio_Processor, buffers: *Process_Buffers) {
     using self := cast(*SVF_Processor) proc;
 
     SVF.set_parameters(*filter,
-                       cast(float32) params.cutoff_param.current_value,
-                       cast(float32) params.q_param.current_value);
+                       cast(float32) param_get_modulated_value(*params.cutoff_param),
+                       cast(float32) param_get_modulated_value(*params.q_param));
 
     for ch: 0..buffers.num_in_channels-1 {
         channel_data_in := buffers.data_in[ch];
