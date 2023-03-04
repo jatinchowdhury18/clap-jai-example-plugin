@@ -70,5 +70,7 @@ plugin_init :: (using plugin: *SVF_Plugin) {
 
 plugin_activate :: (using plugin: *SVF_Plugin, sample_rate: float64, max_block_size: u32) {
     log("Activating plugin!\n");
+
+    // TODO: channel count is hard-coded to "2" here!
     prepare_processor(*audio_processor, sample_rate, max_block_size, 2);
 }
