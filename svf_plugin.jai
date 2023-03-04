@@ -1,8 +1,8 @@
 #import "Basic";
-#import "clap-plugin-base"(Plugin_Type=SVF_Plugin,
-                           plugin_id=clap_plugin_id,
-                           PLUGIN_CREATOR=create_plugin,
-                           PLUGIN_DESCRIPTOR_GETTER=get_descriptor);
+#import "clap-jai-plugin-base"(Plugin_Type=SVF_Plugin,
+                               plugin_id=clap_plugin_id,
+                               PLUGIN_CREATOR=create_plugin,
+                               PLUGIN_DESCRIPTOR_GETTER=get_descriptor);
 #import "clap-jai";
 #load "custom_audio_ports.jai";
 #load "svf_params.jai";
