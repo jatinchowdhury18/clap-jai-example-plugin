@@ -24,17 +24,12 @@ modules.
 
 To build, you can run:
 ```bash
-jai build_clap.jai
+jai -import_dir path/to/modules -exe svf_clap_plugin build_clap.jai
 ```
 
-You will likely need to adjust some of the constants
-defined in `build_clap.jai` to work with your setup.
-
 The build process will generate the plugin in a file called
-`svf_clap_plugin.dll`. I'm planning to figure out how to
-generate a file with the .clap extension, but for now,
-you should be able to rename the file as such, copy it
-into your plugins folder, and test it out in your DAW.
+`svf_clap_plugin.clap`. You should be able to copy it
+into your plugins folder and test it out in your DAW.
 
 Currently, the plugin has only been tested on Windows,
 though I imagine Linux builds would work as well.

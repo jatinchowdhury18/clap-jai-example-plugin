@@ -2,11 +2,7 @@
 #import "Compiler";
 File :: #import "File";
 
-// TODO: figure out how to make these command-line arguments
 main_file :: "svf_plugin.jai";
-plugin_file_name :: "svf_clap_plugin";
-extra_module_paths :: string.["D:/Code/jai/jatin/modules"];
-release_build :: true;
 
 #run build();
 
@@ -14,18 +10,29 @@ build :: () {
     w := compiler_create_workspace();
 
     target_options := get_build_options(w);
-    target_options.output_executable_name = plugin_file_name;
     target_options.output_type = .DYNAMIC_LIBRARY; // specifies output to be a dynamic library
-
-    if release_build {
-        target_options.optimization_level = .RELEASE; // specifies the optimization level to be .RELEASE
-    } else {
-        target_options.optimization_level = .DEBUG;   // specifies the optimization level to be .DEBUG
-    }
 
     import_paths: [..] string;
     array_add(*import_paths, ..target_options.import_path);
-    array_add(*import_paths, ..extra_module_paths);
+    plugin_file_name := "";
+    cli_args := target_options.compile_time_command_line;
+    for arg, idx: cli_args {
+        if arg == "-import_dir" {
+            array_add(*import_paths, cli_args[idx + 1]); // ..extra_module_paths);
+        } else if arg == "-exe" {
+            plugin_file_name = cli_args[idx + 1];
+            target_options.output_executable_name = plugin_file_name;
+        } else if arg == "-release" {
+            set_optimization_level(*target_options, 2, 0);
+            target_options.stack_trace = false;
+        } else if arg == "-quiet" {
+            target_options.text_output_flags = 0;
+        } else if arg == "-x64" {
+            target_options.backend = .X64;
+        } else if arg == "-llvm" {
+            target_options.backend = .LLVM;
+        }
+    }
     target_options.import_path = import_paths;
 
     set_build_options(target_options, w);
