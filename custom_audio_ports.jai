@@ -11,8 +11,8 @@ custom_audio_ports_init :: (using self: *Custom_Audio_Ports, ports_ext: **Audio_
 }
 
 audio_ports_get :: (plugin: *clap_plugin_t, index: u32, is_input: bool, info: *clap_audio_port_info_t) -> bool #c_call {
-    input_str :: "Input";
-    output_str :: "Output";
+    input_str :: "Input\0";
+    output_str :: "Output\0";
     clap_audio_ports_get(plugin, index, is_input, info);
     if index == 0 {
         if is_input {

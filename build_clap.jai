@@ -18,7 +18,7 @@ build :: () {
     cli_args := target_options.compile_time_command_line;
     for arg, idx: cli_args {
         if arg == "-import_dir" {
-            array_add(*import_paths, cli_args[idx + 1]); // ..extra_module_paths);
+            array_add(*import_paths, cli_args[idx + 1]);
         } else if arg == "-exe" {
             plugin_file_name = cli_args[idx + 1];
             target_options.output_executable_name = plugin_file_name;
