@@ -23,7 +23,7 @@ build :: () {
             plugin_file_name = cli_args[idx + 1];
             target_options.output_executable_name = plugin_file_name;
         } else if arg == "-release" {
-            set_optimization_level(*target_options, 2, 0);
+            set_optimization(*target_options, .OPTIMIZED);
             target_options.stack_trace = false;
         } else if arg == "-quiet" {
             target_options.text_output_flags = 0;
@@ -47,10 +47,17 @@ build :: () {
     // rename file from .dll to .clap
     // we're probably going to need to do something
     // a little different on Linux and MacOS
-    dll_file := tprint("%.dll", plugin_file_name);
-    clap_file := tprint("%.clap", plugin_file_name);
-    File.file_delete(clap_file);
-    File.file_move(dll_file, tprint("%.clap", plugin_file_name));
+    #if OS == .WINDOWS {
+        dll_file := tprint("%.dll", plugin_file_name);
+        clap_file := tprint("%.clap", plugin_file_name);
+        File.file_delete(clap_file);
+        File.file_move(dll_file, clap_file);
+    } else #if OS == .MACOS {
+        dll_file := tprint("%.dylib", plugin_file_name);
+        clap_file := tprint("macos_bundle/svf-clap-plugin.clap/Contents/MacOS/%", plugin_file_name);
+        File.file_delete(clap_file);
+        File.file_move(dll_file, clap_file);
+    }
 }
 
 message_loop :: () {

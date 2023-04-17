@@ -9,7 +9,6 @@
 #load "svf_processor.jai";
 
 // TODO:
-// state saving/loading
 // dynamic channel count
 // reset()
 // GUI??

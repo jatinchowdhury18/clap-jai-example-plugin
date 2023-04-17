@@ -6,3 +6,7 @@ old/
 *.pdb
 *.exe
 *.clap
+*.dylib*
+.DS_Store
+!macos_bundle/*.clap
+macos_bundle/*.clap/Contents/MacOS/*
