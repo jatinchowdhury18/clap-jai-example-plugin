@@ -2,7 +2,13 @@
 #import "Compiler";
 File :: #import "File";
 
+#if OS == .MACOS {
+    Bundler :: #import,file "macos_bundle/clap_bundler.jai";
+}
+
 main_file :: "svf_plugin.jai";
+plugin_exe_name :: "svf_clap_plugin";
+Config :: #import,file "plugin_config.jai";
 
 #run build();
 
@@ -11,17 +17,14 @@ build :: () {
 
     target_options := get_build_options(w);
     target_options.output_type = .DYNAMIC_LIBRARY; // specifies output to be a dynamic library
+    target_options.output_executable_name = plugin_exe_name;
 
     import_paths: [..] string;
     array_add(*import_paths, ..target_options.import_path);
-    plugin_file_name := "";
     cli_args := target_options.compile_time_command_line;
     for arg, idx: cli_args {
         if arg == "-import_dir" {
             array_add(*import_paths, cli_args[idx + 1]);
-        } else if arg == "-exe" {
-            plugin_file_name = cli_args[idx + 1];
-            target_options.output_executable_name = plugin_file_name;
         } else if arg == "-release" {
             set_optimization(*target_options, .OPTIMIZED);
             target_options.stack_trace = false;
@@ -44,19 +47,21 @@ build :: () {
 
     set_build_options_dc(.{do_output=false});  // No executable for this workspace.
 
-    // rename file from .dll to .clap
-    // we're probably going to need to do something
-    // a little different on Linux and MacOS
     #if OS == .WINDOWS {
-        dll_file := tprint("%.dll", plugin_file_name);
-        clap_file := tprint("%.clap", plugin_file_name);
+        dll_file := tprint("%.dll", plugin_exe_name);
+        clap_file := tprint("%.clap", plugin_exe_name);
         File.file_delete(clap_file);
         File.file_move(dll_file, clap_file);
     } else #if OS == .MACOS {
-        dll_file := tprint("%.dylib", plugin_file_name);
-        clap_file := tprint("macos_bundle/svf-clap-plugin.clap/Contents/MacOS/%", plugin_file_name);
-        File.file_delete(clap_file);
-        File.file_move(dll_file, clap_file);
+        dll_file := tprint("%.dylib", plugin_exe_name);
+        clap_file := tprint("%.clap", plugin_exe_name);
+        File.delete_directory(clap_file);
+        Bundler.create_clap_bundle(plugin_exe_name,
+                                   dll_file,
+                                   Config.clap_plugin_id,
+                                   Config.clap_plugin_name,
+                                   Config.clap_plugin_version,
+                                   Config.clap_plugin_desc);
     }
 }
 

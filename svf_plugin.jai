@@ -1,9 +1,10 @@
 #import "Basic";
+#import "clap-jai";
+#import,file "plugin_config.jai";
 #import "clap-jai-plugin-base"(Plugin_Type=SVF_Plugin,
                                plugin_id=clap_plugin_id,
                                PLUGIN_CREATOR=create_plugin,
                                PLUGIN_DESCRIPTOR_GETTER=get_descriptor);
-#import "clap-jai";
 #load "custom_audio_ports.jai";
 #load "svf_params.jai";
 #load "svf_processor.jai";
@@ -13,14 +14,10 @@
 // reset()
 // GUI??
 
-clap_plugin_id :: "com.chowdsp.svf-plugin";
-clap_features :: *u8.[CLAP_PLUGIN_FEATURE_AUDIO_EFFECT.data, CLAP_PLUGIN_FEATURE_FILTER.data, null];
-
 SVF_Plugin :: struct {
     #as using base: Plugin_Base;
 
     // audio processor
-    audio_thread_ctx: Audio_Thread_Context;
     audio_processor: SVF_Processor;
 
     // clap extensions
@@ -29,16 +26,6 @@ SVF_Plugin :: struct {
     state_save_load: Plugin_State;
     plugin_ui: Plugin_Gui;
 }
-
-plugin_name :: "Jai CLAP SVF\0";
-clap_plugin_descriptor :: clap_plugin_descriptor_t.{clap_version=CLAP_VERSION,
-                                                    id=clap_plugin_id.data,
-                                                    name="Jai CLAP SVF",
-                                                    vendor="chowdsp",
-                                                    url="https://chowdsp.com",
-                                                    version="0.0.0",
-                                                    description="Simple filter plugin made in Jai!",
-                                                    features=clap_features.data};
 
 get_descriptor :: (factory: *clap_plugin_factory_t, idx: u32) -> *clap_plugin_descriptor_t #c_call {
     return *clap_plugin_descriptor;
@@ -50,6 +37,7 @@ create_plugin :: (factory: *clap_plugin_factory_t, host: *clap_host_t) -> *clap_
     plugin_base_init(self, factory, host);
     initialize_plugin = plugin_init;
     activate = plugin_activate;
+    deactivate = plugin_deactivate;
     custom_audio_ports_init(*custom_audio_ports, *clap_audio_ports_ext);
     clap_params_ext = *params;
     clap_state_ext = *state_save_load;
@@ -63,7 +51,6 @@ plugin_init :: (using plugin: *SVF_Plugin) {
 
     init_params(*params);
 
-    init_audio_thread_context(*audio_thread_ctx);
     audio_processor.params = *params;
     audio_processor.derived = *audio_processor;
     audio_processor.process_audio = process_svf;
@@ -74,4 +61,17 @@ plugin_activate :: (using plugin: *SVF_Plugin, sample_rate: float64, max_block_s
 
     // TODO: channel count is hard-coded to "2" here!
     prepare_processor(*audio_processor, sample_rate, max_block_size, 2);
+
+    // set up audio thread temporary storage
+    audio_thread_storage_bytes := 20 * max_block_size;
+    array_resize(*audio_processor.audio_thread_storage_data, audio_thread_storage_bytes);
+    audio_processor.audio_thread_storage.data = audio_processor.audio_thread_storage_data.data;
+    audio_processor.audio_thread_storage.size = audio_thread_storage_bytes;
+}
+
+plugin_deactivate :: (using plugin: *SVF_Plugin) {
+    log("Deactivating plugin!\n");
+
+    // freeing audio thread temporary storage
+    array_free(audio_processor.audio_thread_storage_data);
 }

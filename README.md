@@ -9,9 +9,9 @@ Working:
 - Audio ports
 - Parameters (with automation and modulation)
 - DSP
+- State saving/loading
 
 Not yet working:
-- State saving/loading
 - GUI
 
 ## Building
@@ -24,12 +24,18 @@ modules.
 
 To build, you can run:
 ```bash
-jai -import_dir path/to/modules -exe svf_clap_plugin build_clap.jai
+jai -import_dir path/to/modules
 ```
 
 The build process will generate the plugin in a file called
 `svf_clap_plugin.clap`. You should be able to copy it
 into your plugins folder and test it out in your DAW.
 
-Currently, the plugin has only been tested on Windows,
-though I imagine Linux builds would work as well.
+Currently, the plugin has been tested on Windows, and a
+little bit on Mac, although there's a bit of funky build
+behaviour that needs to be worked out. I imagine Linux
+builds should work as well.
+
+## License
+
+This repository is licensed under the MIT Software License.
