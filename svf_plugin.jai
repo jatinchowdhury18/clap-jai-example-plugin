@@ -37,7 +37,6 @@ create_plugin :: (factory: *clap_plugin_factory_t, host: *clap_host_t) -> *clap_
     plugin_base_init(self, factory, host);
     initialize_plugin = plugin_init;
     activate = plugin_activate;
-    deactivate = plugin_deactivate;
     custom_audio_ports_init(*custom_audio_ports, *clap_audio_ports_ext);
     clap_params_ext = *params;
     clap_state_ext = *state_save_load;
@@ -56,21 +55,13 @@ plugin_init :: (using plugin: *SVF_Plugin) {
     audio_processor.process_audio = process_svf;
 }
 
-plugin_activate :: (using plugin: *SVF_Plugin, sample_rate: float64, max_block_size: u32) {
+plugin_activate :: (using plugin: *SVF_Plugin, sample_rate: float64, max_block_size: u32) -> s64 {
     log("Activating plugin!\n");
 
     // TODO: channel count is hard-coded to "2" here!
     prepare_processor(*audio_processor, sample_rate, max_block_size, 2);
 
-    // set up audio thread temporary storage
-    audio_thread_storage_bytes := 20 * max_block_size;
-    array_resize(*audio_processor.audio_thread_storage_data, audio_thread_storage_bytes);
-    set_initial_data(*audio_processor.audio_thread_storage, audio_thread_storage_bytes, audio_processor.audio_thread_storage_data.data);
-}
-
-plugin_deactivate :: (using plugin: *SVF_Plugin) {
-    log("Deactivating plugin!\n");
-
-    // freeing audio thread temporary storage
-    array_free(audio_processor.audio_thread_storage_data);
+    // allocate 20x the max block size to use for audio thread temp storage
+    // TODO: figure how to make a compile-time check for this...
+    return 20 * max_block_size;
 }
