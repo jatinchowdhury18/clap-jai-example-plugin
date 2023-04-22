@@ -65,8 +65,7 @@ plugin_activate :: (using plugin: *SVF_Plugin, sample_rate: float64, max_block_s
     // set up audio thread temporary storage
     audio_thread_storage_bytes := 20 * max_block_size;
     array_resize(*audio_processor.audio_thread_storage_data, audio_thread_storage_bytes);
-    audio_processor.audio_thread_storage.data = audio_processor.audio_thread_storage_data.data;
-    audio_processor.audio_thread_storage.size = audio_thread_storage_bytes;
+    set_initial_data(*audio_processor.audio_thread_storage, audio_thread_storage_bytes, audio_processor.audio_thread_storage_data.data);
 }
 
 plugin_deactivate :: (using plugin: *SVF_Plugin) {
