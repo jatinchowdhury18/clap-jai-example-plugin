@@ -31,10 +31,8 @@ The build process will generate the plugin in a file called
 `svf_clap_plugin.clap`. You should be able to copy it
 into your plugins folder and test it out in your DAW.
 
-Currently, the plugin has been tested on Windows, and a
-little bit on Mac, although there's a bit of funky build
-behaviour that needs to be worked out. I imagine Linux
-builds should work as well.
+Currently, the plugin has been tested on Windows and Mac.
+I imagine Linux builds should work as well.
 
 ## License
 
