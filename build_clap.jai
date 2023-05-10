@@ -69,13 +69,13 @@ message_loop :: () {
     while true {
         message := compiler_wait_for_message();
         if message.kind == {
-        //   case .FILE;
-        //     message_file := cast(*Message_File) message;
-        //     print("  Loading file '%'.\n", message_file.fully_pathed_filename);
+          // case .FILE;
+          //   message_file := cast(*Message_File) message;
+          //   print("  Loading file '%'.\n", message_file.fully_pathed_filename);
             
-        //   case .IMPORT;
-        //     import := cast(*Message_Import) message;
-        //     print("  Importing module '%'.\n", import.module_name);
+          // case .IMPORT;
+          //   import := cast(*Message_Import) message;
+          //   print("  Importing module '%'.\n", import.module_name);
 
           case .COMPLETE;
             break;

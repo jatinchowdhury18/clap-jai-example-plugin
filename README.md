@@ -24,7 +24,7 @@ modules.
 
 To build, you can run:
 ```bash
-jai -import_dir path/to/modules
+jai -import_dir path/to/modules build_clap.jai
 ```
 
 The build process will generate the plugin in a file called
