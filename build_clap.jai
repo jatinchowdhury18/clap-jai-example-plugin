@@ -18,6 +18,9 @@ build :: () {
     target_options := get_build_options(w);
     target_options.output_type = .DYNAMIC_LIBRARY; // specifies output to be a dynamic library
     target_options.output_executable_name = plugin_exe_name;
+    // target_options.llvm_options.target_system_triple = "arm64-apple-darwin21.6.0";
+    // target_options.llvm_options.target_system_cpu = "generic"; // "apple-a2";
+    // print("%\n", target_options.llvm_options);
 
     import_paths: [..] string;
     array_add(*import_paths, ..target_options.import_path);
