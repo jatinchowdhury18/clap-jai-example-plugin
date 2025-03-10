@@ -7,8 +7,7 @@ clap_get_plugin_descriptor :: (factory: *clap_plugin_factory_t, idx: u32) -> *cl
 }
 
 clap_create_plugin :: (factory: *clap_plugin_factory_t, host: *clap_host_t, plugin_id_to_create: *char) -> *clap_plugin_t #c_call {
-    new_context: Context;
-    push_context new_context {
+    push_context {
         str_plugin_id := to_string(plugin_id_to_create);
         if (str_plugin_id != clap_plugin_id) {
             print("Wrong plugin_id! Got: %, expected: %. Returning null!\n", str_plugin_id, clap_plugin_id);
